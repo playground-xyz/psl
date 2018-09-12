@@ -37,8 +37,12 @@ internals.endsWith = function (str, suffix) {
 //
 internals.findRule = function (domain, useFastFlag) {
 
+  // JF: Fallback to slow parsing if precomputation hasn't happened
   if (useFastFlag && !internals.fastRules) {
-    throw new Error('Must call `precomputeFastRules` before using the fast variation of the parser');
+    useFastFlag = false;
+    // throw new Error(
+    //   'Must call `precomputeFastRules` before using the fast variation of the parser'
+    // );
   }
 
   var punyDomain = Punycode.toASCII(domain);
@@ -51,15 +55,13 @@ internals.findRule = function (domain, useFastFlag) {
     if (!internals.endsWith(punyDomain, '.' + rule.punySuffix) && punyDomain !== rule.punySuffix) {
       return memo;
     }
-    // This has been commented out as it never seems to run. This is because
-    // sub tlds always appear after their parents and we never find a shorter
-    // match.
-    //if (memo) {
-    //  var memoSuffix = Punycode.toASCII(memo.suffix);
-    //  if (memoSuffix.length >= punySuffix.length) {
-    //    return memo;
-    //  }
-    //}
+
+    if (memo && useFastFlag) {
+      var memoSuffix = Punycode.toASCII(memo.suffix);
+      if (memoSuffix.length >= rule.punySuffix.length) {
+        return memo;
+      }
+    }
     return rule;
   }, null);
 };
@@ -146,11 +148,13 @@ internals.onlyUniqueRules = function (value, index, xs) {
   return xs
     .map(function (rule) {
 
+      if (!rule) {
+        return null;
+      }
       return rule.rule;
     })
     .indexOf(value.rule) === index;
 };
-
 
 //
 // Public API

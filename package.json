@@ -1,10 +1,10 @@
 {
-  "name": "psl",
-  "version": "1.1.28",
+  "name": "@playgroundxyz/psl",
+  "version": "1.2.0",
   "description": "Domain name parser based on the Public Suffix List",
   "repository": {
     "type": "git",
-    "url": "git@github.com:wrangr/psl.git"
+    "url": "git@github.com:playground-xyz/psl.git"
   },
   "main": "index.js",
   "scripts": {
