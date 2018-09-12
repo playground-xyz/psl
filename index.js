@@ -37,8 +37,12 @@ internals.endsWith = function (str, suffix) {
 //
 internals.findRule = function (domain, useFastFlag) {
 
+  // JF: Fallback to slow parsing if precomputation hasn't happened
   if (useFastFlag && !internals.fastRules) {
-    throw new Error('Must call `precomputeFastRules` before using the fast variation of the parser');
+    useFastFlag = false;
+    // throw new Error(
+    //   'Must call `precomputeFastRules` before using the fast variation of the parser'
+    // );
   }
 
   var punyDomain = Punycode.toASCII(domain);
